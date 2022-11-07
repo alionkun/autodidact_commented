@@ -24,7 +24,7 @@ def grad(fun, argnum=0):
         # compute derivative wrt.
         unary_fun = lambda x: fun(*subval(args, argnum, x), **kwargs)
 
-        # Construct vector-Jacobian product
+        # Construct vector-Jacobian product 最后用的还是同一个参数
         vjp, ans = make_vjp(unary_fun, args[argnum])
         return vjp(np.ones_like(ans))
     return gradfun

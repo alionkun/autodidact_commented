@@ -17,13 +17,13 @@ def subvals(x, ivs):
     return tuple(x_)
 
 def subval(x, i, v):
-    """Replace the i-th value of x with v."""
+    """Replace the i-th value of x with v. x是一个位置参数列表，使用v替换x中第i个参数"""
     x_ = list(x)
     x_[i] = v
     return tuple(x_)
 
-def toposort(end_node):
-    child_counts = {}
+def toposort(end_node): # 
+    child_counts = {} # 统计每个节点的孩子节点数量
     stack = [end_node]
     while stack:
         node = stack.pop()
@@ -31,7 +31,7 @@ def toposort(end_node):
             child_counts[node] += 1
         else:
             child_counts[node] = 1
-            stack.extend(node.parents)
+            stack.extend(node.parents) # 能够进入 stack 是因为在孩子节点的 parents 列表，所以 stack 中的节点都对应着一个孩子节点
 
     childless_nodes = [end_node]
     while childless_nodes:
@@ -47,7 +47,7 @@ def wraps(fun, namestr="{fun}", docstr="{doc}", **kwargs):
     """Decorator for a function wrapping another.
 
     Used when wrapping a function to ensure its name and docstring get copied
-    over.
+    over. // 只是为了拷贝 name 和 doc 两个属性
 
     Args:
       fun: function to be wrapped

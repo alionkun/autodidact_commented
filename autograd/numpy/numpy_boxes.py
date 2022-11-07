@@ -28,7 +28,7 @@ class ArrayBox(Box):
     def __getitem__(A, idx): return A[idx]
 
     # Constants w.r.t float data just pass though
-    shape = property(lambda self: self._value.shape)
+    shape = property(lambda self: self._value.shape) # class property(fget=None, fset=None, fdel=None, doc=None) https://docs.python.org/3/library/functions.html#property
     ndim  = property(lambda self: self._value.ndim)
     size  = property(lambda self: self._value.size)
     dtype = property(lambda self: self._value.dtype)

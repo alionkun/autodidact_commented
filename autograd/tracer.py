@@ -56,7 +56,7 @@ class Node(object):
     @classmethod
     def new_root(cls, *args, **kwargs):
         root = cls.__new__(cls)
-        root.initialize_root(*args, **kwargs)
+        root.initialize_root(*args, **kwargs) # 唯一的子类 ArrayBox 没有重写该函数，root节点就是这个样
         return root
 
 def primitive(f_raw):
@@ -111,7 +111,7 @@ def notrace_primitive(f_raw):
         argvals = map(getval, args)
 
         # Call original function. Note that f_raw()'s arguments may still be
-        # boxed, but with a lower trace_id.
+        # boxed, but with a lower trace_id. 因为可能有多层包装，因为可以求高阶梯度
         return f_raw(*argvals, **kwargs)
     return f_wrapped
 
@@ -181,10 +181,10 @@ class Box(object):
     # take same arguments for __init__().
     type_mappings = {}
 
-    # Non-Box types that can be boxed.
+    # Non-Box types that can be boxed. Box的所有子类
     types = set()
 
-    def __init__(self, value, trace_id, node):
+    def __init__(self, value, trace_id, node): # Box 和 Node 的关系是什么？
         self._value = value
         self._node = node
         self._trace_id = trace_id
@@ -217,25 +217,25 @@ class Box(object):
         Box.type_mappings[cls] = cls
 
 
-box_type_mappings = Box.type_mappings
+box_type_mappings = Box.type_mappings # keys=[<class 'numpy.ndarray'>, <class 'autograd.numpy.numpy_boxes.ArrayBox'>, <class 'float'>, <class 'numpy.float64'>, <class 'numpy.float32'>, <class 'numpy.float16'>, <class 'complex'>, <class 'numpy.complex64'>, <class 'numpy.complex128'>]，没有 Box 类型。
 
 def new_box(value, trace_id, node):
     """Box an unboxed value.
 
     Args:
       value: unboxed value
-      trace_id: int. Trace stack depth.
+      trace_id: int. Trace stack depth. 栈的深度 == 梯度的阶数
       node: Node corresponding to this boxed value.
 
     Returns:
       Boxed value.
     """
     try:
-        return box_type_mappings[type(value)](value, trace_id, node)
+        return box_type_mappings[type(value)](value, trace_id, node) # 目前都是 autograd.numpy.numpy_boxes.ArrayBox 类型
     except KeyError:
         raise TypeError("Can't differentiate w.r.t. type {}".format(type(value)))
 
-box_types = Box.types
+box_types = Box.types # 目前只有 autograd.numpy.numpy_boxes.ArrayBox 一个类型
 
 # If True, the value is Box.
 isbox  = lambda x: type(x) in box_types  # almost 3X faster than isinstance(x, Box)
