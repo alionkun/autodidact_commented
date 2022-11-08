@@ -22,7 +22,7 @@ def subval(x, i, v):
     x_[i] = v
     return tuple(x_)
 
-def toposort(end_node): # 
+def toposort(end_node): # 以结束节点（loss）为起点，反向遍历计算图，得到反向图的节点拓扑序，也是 backprop 的计算顺序
     child_counts = {} # 统计每个节点的孩子节点数量
     stack = [end_node]
     while stack:
@@ -33,7 +33,7 @@ def toposort(end_node): #
             child_counts[node] = 1
             stack.extend(node.parents) # 能够进入 stack 是因为在孩子节点的 parents 列表，所以 stack 中的节点都对应着一个孩子节点
 
-    childless_nodes = [end_node]
+    childless_nodes = [end_node] # childless 中的节点的孩子节点都找到了，从梯度计算的角度看，也就是该节点可以结算梯度了。
     while childless_nodes:
         node = childless_nodes.pop()
         yield node
