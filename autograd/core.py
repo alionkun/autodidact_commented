@@ -66,7 +66,10 @@ def add_outgrads(prev_g, g):
     return prev_g + g
 
 primitive_vjps = defaultdict(dict)
+# NOTE(alionkun) VJP实际上就是TensorFlow中的OP的grad_fn，这里就是注册 grad_fn 
 def defvjp(fun, *vjps, **kwargs):
+    # NOTE(alionkun) 在TensorFlow中，grad_fn直接返回Loss关于每个函数参数的梯度，因此函数参数的顺序是固定的
+    # NOTE(alionkun) 在defvjp中我们可以看到也是类似的
     """Register vector-Jacobian product functions.
 
     Let fun(x, y, ...) = ans be a function. We wish to register a
@@ -83,6 +86,9 @@ def defvjp(fun, *vjps, **kwargs):
       *vjps: functions. vector-Jacobian products. One per argument to fun().
       **kwargs: additional keyword arugments. Only 'argnums' is used.
     """
+    # NOTE(alionkun) 如果指定了argnums作为fun的参数数量，则使用之
+    # NOTE(alionkun) 否则赋予一个count()，这是一个无限序列生成器，默认从0开始，step=1
+    # NOTE(alionkun) 这个参数貌似没见使用
     argnums = kwargs.get('argnums', count())
     for argnum, vjp in zip(argnums, vjps):
         primitive_vjps[fun][argnum] = vjp
