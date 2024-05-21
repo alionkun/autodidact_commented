@@ -56,7 +56,8 @@ class Node(object):
     @classmethod
     def new_root(cls, *args, **kwargs):
         root = cls.__new__(cls)
-        root.initialize_root(*args, **kwargs) # 唯一的子类 ArrayBox 没有重写该函数，root节点就是这个样
+        # NOTE(alionkun) 唯一的子类 ArrayBox 没有重写该函数，root节点就是这个样，并且唯一的调用处没有使用任何参数
+        root.initialize_root(*args, **kwargs)
         return root
 
 def primitive(f_raw):
@@ -208,9 +209,12 @@ class Box(object):
           cls: Inherits from Box. Type to box values of type 'value_type'.
           value_type: Type to be boxed.
         """
+        # NOTE(alionkun) types是一个set集合，所以相当于登记了所有Box的子类
+        # NOTE(alionkun) type_mappings使得可以通过普通类型找到对应的Box类型
         Box.types.add(cls)
         Box.type_mappings[value_type] = cls
 
+        # TODO(alionkun) 不好懂啊
         # The Box implementation for a Box type is itself. Why? Imagine a nested
         # call to grad(). One doesn't want the inner Box's computation graph to
         # interact with the outer Box's.
@@ -224,7 +228,7 @@ def new_box(value, trace_id, node):
 
     Args:
       value: unboxed value
-      trace_id: int. Trace stack depth. 栈的深度 == 梯度的阶数
+      trace_id: int. Trace stack depth. 栈的深度 == 梯度的阶数 ？？？
       node: Node corresponding to this boxed value.
 
     Returns:

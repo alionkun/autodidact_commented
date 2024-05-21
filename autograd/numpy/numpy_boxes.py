@@ -11,6 +11,8 @@ from . import numpy_wrapper as anp
 
 Box.__array_priority__ = 90.0
 
+# NOTE(alionkun) ArrayBox 包装了 np.ndarray
+# TODO(alionkun) 目的是什么呢
 class ArrayBox(Box):
     """Box for np.ndarray.
 

@@ -27,6 +27,7 @@ def make_vjp(fun, x):
       end_value: end_value = fun(start_node)
 
     """
+    # NOTE(alionkun) start_node表示计算图的起点节点，也就是x对应的计算图的节点
     start_node = Node.new_root()
     end_value, end_node = trace(start_node, fun, x)
     if end_node is None:
