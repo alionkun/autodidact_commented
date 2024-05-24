@@ -47,7 +47,7 @@ def wraps(fun, namestr="{fun}", docstr="{doc}", **kwargs):
     """Decorator for a function wrapping another.
 
     Used when wrapping a function to ensure its name and docstring get copied
-    over. // 只是为了拷贝 name 和 doc 两个属性
+    over. // 只是为了拷贝 name 和 doc 两个属性，应用场景是被装饰的函数本身也是一个装饰器
 
     Args:
       fun: function to be wrapped

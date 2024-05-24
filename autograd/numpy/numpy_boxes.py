@@ -24,6 +24,11 @@ class ArrayBox(Box):
 
     # Used by NumPy to determine which type gets returned when there are
     # multiple possibilities. Larger numbers == higher priority.
+    # NOTE(alionkun) 上面Box的这个属性被设置为90，这里是100，说有想要优先使用ArrayBox
+    """__array_priority__是一个特殊的属性，主要在NumPy库中使用，用于控制二元操作符如加法、乘法等的行为。
+     当你有两个不同类型的对象需要进行二元操作时，Python需要决定调用哪个对象的方法。例如，如果你有一个NumPy数组和一个自定义类的实例，并且你想要对它们进行加法操作，Python需要决定是调用NumPy数组的__add__方法，还是调用你的自定义类的__add__方法。
+      这就是__array_priority__发挥作用的地方。Python会比较两个对象的__array_priority__属性的值，值较大的对象的方法会被调用。如果两个对象的__array_priority__属性值相同，那么左操作数的方法会被调用。
+    """
     __array_priority__ = 100.0
 
     @primitive

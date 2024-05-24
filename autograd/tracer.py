@@ -50,10 +50,15 @@ class Node(object):
         self.recipe = (fun, value, args, kwargs, parent_argnums)
 
     def initialize_root(self):
+        # NOTE(alionkun) 计算图的起始节点是没有上游节点的
         self.parents = []
+        # NOTE(alionkun) `lambda x: x`表示起始节点也就是直接输出计算图的输入
         self.recipe = (lambda x: x, None, (), {}, [])
 
     @classmethod
+    # NOTE(wilkenslin) 为什么搞一个new_root函数，使用__init__()无法满足需求吗
+    # NOTE(wilkenslin) 另外root是否叫做leaf更合适？
+    # NOTE(wilkenslin) 看来需要看autograd的原作才行，教学版有关键细节丢失的问题
     def new_root(cls, *args, **kwargs):
         root = cls.__new__(cls)
         # NOTE(alionkun) 唯一的子类 ArrayBox 没有重写该函数，root节点就是这个样，并且唯一的调用处没有使用任何参数
@@ -175,6 +180,8 @@ class TraceStack(object):
 
 trace_stack = TraceStack()
 
+# NOTE(alionkun) 参考https://matt-graham.github.io/slides/ad/index.html#/5/7
+# NOTE(alionkun) Box机制用于包装真是的value和计算图的node
 class Box(object):
     """Boxes a value within a computation graph."""
 
@@ -245,4 +252,5 @@ box_types = Box.types # 目前只有 autograd.numpy.numpy_boxes.ArrayBox 一个�
 isbox  = lambda x: type(x) in box_types  # almost 3X faster than isinstance(x, Box)
 
 # Get value from a Box.
+# NOTE(alionkun) 通过递归来实现多层嵌套的 unboxing 
 getval = lambda x: getval(x._value) if isbox(x) else x
